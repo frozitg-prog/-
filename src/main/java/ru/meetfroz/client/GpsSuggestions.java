@@ -115,36 +115,32 @@ public final class GpsSuggestions {
         int screenWidth = mc.getWindow().getScaledWidth();
         int screenHeight = mc.getWindow().getScaledHeight();
 
-        int lineHeight = 10;
+        // Ванильная раскладка списка автодополнения.
+        int lineHeight = 12;
         int maxWidth = 0;
         for (Row row : rows) {
-            int width = renderer.getWidth(row.text);
-            if (row.desc != null) width += 8 + renderer.getWidth(row.desc);
-            maxWidth = Math.max(maxWidth, width);
+            maxWidth = Math.max(maxWidth, renderer.getWidth(row.text));
         }
         maxWidth = Math.min(maxWidth, screenWidth - 12);
 
-        int popupHeight = rows.size() * lineHeight + 6;
+        int padding = 3;
+        int popupHeight = rows.size() * lineHeight + padding * 2;
         int x = 4;
         int yTop = screenHeight - 14 - 8 - popupHeight;
+        int right = x + maxWidth + padding * 2;
 
-        context.fill(x - 3, yTop - 3, x + maxWidth + 6, yTop + popupHeight + 3, 0xB008080F);
-        context.fill(x - 3, yTop - 3, x + maxWidth + 6, yTop - 2, 0xFF5A7BFF);
+        context.fill(x - 2, yTop - 2, right + 2, yTop + popupHeight + 2, 0xF0000000);
 
-        int selected = (baseText != null && baseText.equals(text)) ? index : -1;
-        int y = yTop;
+        int selected = applied != null && applied.equals(text) ? index : -1;
+        int y = yTop + padding;
         for (int i = 0; i < rows.size(); i++) {
             Row row = rows.get(i);
-            if (i == selected) {
-                context.fill(x - 2, y - 1, x + maxWidth + 4, y + lineHeight - 2, 0x405A7BFF);
+            boolean isSelected = i == selected;
+            if (isSelected) {
+                context.fill(x, y - 1, right, y + lineHeight - 1, 0xFFFFFFFF);
             }
-            context.drawTextWithShadow(renderer, row.text, x, y, row.color);
-            if (row.desc != null) {
-                int offset = x + renderer.getWidth(row.text) + 8;
-                if (offset + renderer.getWidth(row.desc) < screenWidth - 6) {
-                    context.drawTextWithShadow(renderer, row.desc, offset, y, 0xFF9A9AA8);
-                }
-            }
+            context.drawTextWithShadow(renderer, row.text, x + 2, y,
+                    isSelected ? 0xFF202020 : 0xFFFFFFFF);
             y += lineHeight;
         }
     }
