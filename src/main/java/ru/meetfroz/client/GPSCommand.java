@@ -7,21 +7,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-/**
- * Клиентские команды «.gps ...». Перехватываются локально и никогда не уходят
- * на сервер Minecraft (работают и в одиночке, и в мультиплеере без мода на сервере).
- *
- * .gps <name> <x> <y> <z>  — создать метку (Y можно опустить)
- * .gps <name> <x> <z>      — создать метку, Y берётся у игрока
- * .gps list                — список меток
- * .gps remove <name>       — удалить метку
- * .gps clear               — удалить все метки
- * .gps off / .gps on       — выключить/включить отображение
- * .gps help                — справка
- */
+/** Локальные клиентские команды .qgps — сообщения не отправляются на сервер. */
 public final class GPSCommand {
 
-    private static final String PREFIX = ".gps";
+    private static final String PREFIX = ".qgps";
 
     private GPSCommand() {
     }
@@ -33,7 +22,7 @@ public final class GPSCommand {
             String[] parts = trimmed.split("\\s+");
             if (!parts[0].toLowerCase(Locale.ROOT).equals(PREFIX)) return true;
             handle(parts);
-            return false; // гасим отправку в чат сервера
+            return false;
         });
     }
 
@@ -43,6 +32,7 @@ public final class GPSCommand {
             usage(null);
             return;
         }
+
         String sub = parts[1].toLowerCase(Locale.ROOT);
         switch (sub) {
             case "help" -> usage(null);
@@ -68,19 +58,30 @@ public final class GPSCommand {
                 String name = parts[2];
                 boolean ok = MeetFroz.manager.remove(name);
                 MeetFroz.manager.save();
-                notifyNow(ok ? "§aМетка §f" + name + " §aудалена." : "§cМетка §f" + name + " §cне найдена.");
+                notifyNow(ok ? "§aМетка §f" + name + " §aудалена."
+                        : "§cМетка §f" + name + " §cне найдена.");
+            }
+            case "add" -> {
+                if (parts.length < 3) {
+                    usage("add <name> <x> <y> <z>");
+                    return;
+                }
+                String[] normalized = new String[parts.length - 1];
+                normalized[0] = PREFIX;
+                System.arraycopy(parts, 2, normalized, 1, parts.length - 2);
+                createMarker(normalized, mc);
             }
             default -> createMarker(parts, mc);
         }
     }
 
+    /** Принимает .qgps <name> <x> <y> <z> и сокращённую форму <name> <x> <z>. */
     private static void createMarker(String[] parts, MinecraftClient mc) {
-        // .gps <name> <x> <y> <z>   (parts[0]=.gps, [1]=name)
-        // .gps <name> <x> <z>
         if (parts.length != 4 && parts.length != 5) {
-            usage("<name> <x> <y> <z>");
+            usage("<name> <x> <y> <z> или <name> <x> <z>");
             return;
         }
+
         String name = parts[1];
         double x, y, z;
         try {
@@ -97,7 +98,7 @@ public final class GPSCommand {
                 y = Math.floor(mc.player.getY());
             }
         } catch (NumberFormatException e) {
-            notifyNow("§cКоординаты должны быть числами. Пример: §f.gps Spawn 100 64 -250");
+            notifyNow("§cКоординаты должны быть числами. Пример: §f.qgps add Spawn 100 64 -250");
             return;
         }
 
@@ -112,54 +113,57 @@ public final class GPSCommand {
                     + " §eуже существует (дубликат).");
             return;
         }
-        GPSMarker m = created.get();
+
+        GPSMarker marker = created.get();
         double dist = mc.player != null
-                ? m.distanceTo(mc.player.getX(), mc.player.getY(), mc.player.getZ())
+                ? marker.distanceTo(mc.player.getX(), mc.player.getY(), mc.player.getZ())
                 : 0;
-        notifyNow("§aGPS-метка §f" + m.name + " §asоздана: §f" + m.coordsString()
+        notifyNow("§aGPS-метка §f" + marker.name + " §aсоздана: §f" + marker.coordsString()
                 + "§a, " + (int) Math.round(dist) + " м");
     }
 
     private static void list() {
-        List<GPSMarker> list = MeetFroz.manager.snapshot();
+        List<GPSMarker> markers = MeetFroz.manager.snapshot();
         MinecraftClient mc = MinecraftClient.getInstance();
-        if (list.isEmpty()) {
-            notifyNow("§7Нет активных GPS-меток. Создайте: §f.gps Spawn 100 64 -250");
+        if (markers.isEmpty()) {
+            notifyNow("§7Нет активных GPS-меток. Создайте: §f.qgps add Spawn 100 64 -250");
             return;
         }
-        notifyNow("§bАктивные GPS-метки (" + list.size() + ")§7:");
-        String curDim = mc.world != null ? mc.world.getRegistryKey().getValue().toString() : "";
-        for (GPSMarker m : list) {
-            String dist = "";
-            if (mc.player != null && m.dimension.equals(curDim)) {
-                dist = " §7— §b" + (int) Math.round(
-                        m.distanceTo(mc.player.getX(), mc.player.getY(), mc.player.getZ())) + " м";
+
+        notifyNow("§bАктивные GPS-метки (" + markers.size() + ")§7:");
+        String currentDimension = mc.world != null
+                ? mc.world.getRegistryKey().getValue().toString() : "";
+        for (GPSMarker marker : markers) {
+            String distance = "";
+            if (mc.player != null && marker.dimension.equals(currentDimension)) {
+                distance = " §7— §b" + (int) Math.round(
+                        marker.distanceTo(mc.player.getX(), mc.player.getY(), mc.player.getZ())) + " м";
             }
-            notifyNow(" §8• §f" + m.name + " §7" + m.coordsString() + dist);
+            notifyNow(" §8• §f" + marker.name + " §7" + marker.coordsString() + distance);
         }
         if (!MeetFroz.manager.isEnabled()) {
-            notifyNow("§c(отображение выключено — .gps on)");
+            notifyNow("§c(отображение выключено — .qgps on)");
         }
     }
 
-    private static void usage(String cmd) {
-        if (cmd != null) {
-            notifyNow("§cИспользование: §f.gps " + cmd);
+    private static void usage(String command) {
+        if (command != null) {
+            notifyNow("§cИспользование: §f.qgps " + command);
             return;
         }
         notifyNow("§bMeetFroz GPS §7— команды:");
-        notifyNow(" §f.gps <name> <x> <y> <z> §7— создать метку");
-        notifyNow(" §f.gps <name> <x> <z> §7— создать (Y у игрока)");
-        notifyNow(" §f.gps list §7— список, §f.gps remove <name> §7— удалить");
-        notifyNow(" §f.gps clear §7— очистить, §f.gps on/off §7— показ/скрыть");
+        notifyNow(" §f.qgps add <name> <x> <y> <z> §7— создать метку");
+        notifyNow(" §f.qgps <name> <x> <z> §7— создать (Y у игрока)");
+        notifyNow(" §f.qgps list §7— список, §f.qgps remove <name> §7— удалить");
+        notifyNow(" §f.qgps clear §7— очистить, §f.qgps on/off §7— показать/скрыть");
     }
 
-    private static void notifyNow(String msg) {
+    private static void notifyNow(String message) {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.player != null) {
-            mc.player.sendMessage(net.minecraft.text.Text.literal("§b[MeetFroz] §r" + msg), false);
+            mc.player.sendMessage(net.minecraft.text.Text.literal("§b[MeetFroz] §r" + message), false);
         } else {
-            MeetFroz.LOGGER.info("{}", msg);
+            MeetFroz.LOGGER.info("{}", message);
         }
     }
 }
