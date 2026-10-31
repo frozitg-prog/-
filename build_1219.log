@@ -1,0 +1,83 @@
+
+> Configure project :
+Fabric Loom: 1.13.6
+:remapping sources
+
+> Task :exportClasspath
+
+> Task :compileJava
+D:\MeetFroz\src\main\java\ru\meetfroz\client\GPSRenderer.java:3: error: cannot find symbol
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+                                                  ^
+  symbol:   class WorldRenderContext
+  location: package net.fabricmc.fabric.api.client.rendering.v1
+D:\MeetFroz\src\main\java\ru\meetfroz\client\GPSRenderer.java:4: error: cannot find symbol
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+                                                  ^
+  symbol:   class WorldRenderEvents
+  location: package net.fabricmc.fabric.api.client.rendering.v1
+D:\MeetFroz\src\main\java\ru\meetfroz\client\GPSRenderer.java:39: error: cannot find symbol
+    private static void render(WorldRenderContext context) {
+                               ^
+  symbol:   class WorldRenderContext
+  location: class GPSRenderer
+D:\MeetFroz\src\ver\1.21.9\java\ru\meetfroz\compat\RenderCompat.java:7: error: cannot find symbol
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+                                                  ^
+  symbol:   class WorldRenderContext
+  location: package net.fabricmc.fabric.api.client.rendering.v1
+D:\MeetFroz\src\ver\1.21.9\java\ru\meetfroz\compat\RenderCompat.java:91: error: cannot find symbol
+    public static void drawMarker(WorldRenderContext ctx, GPSMarker m,
+                                  ^
+  symbol:   class WorldRenderContext
+  location: class RenderCompat
+D:\MeetFroz\src\main\java\ru\meetfroz\client\GPSRenderer.java:36: error: package WorldRenderEvents does not exist
+        WorldRenderEvents.LAST.register(GPSRenderer::render);
+                         ^
+6 errors
+
+> Task :compileJava FAILED
+
+[Incubating] Problems report is available at: file:///D:/MeetFroz/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':compileJava'.
+> Compilation failed; see the compiler output below.
+  D:\MeetFroz\src\main\java\ru\meetfroz\client\GPSRenderer.java:3: error: cannot find symbol
+  import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+                                                    ^
+    symbol:   class WorldRenderContext
+    location: package net.fabricmc.fabric.api.client.rendering.v1
+  D:\MeetFroz\src\main\java\ru\meetfroz\client\GPSRenderer.java:4: error: cannot find symbol
+  import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+                                                    ^
+    symbol:   class WorldRenderEvents
+    location: package net.fabricmc.fabric.api.client.rendering.v1
+  D:\MeetFroz\src\main\java\ru\meetfroz\client\GPSRenderer.java:39: error: cannot find symbol
+      private static void render(WorldRenderContext context) {
+                                 ^
+    symbol:   class WorldRenderContext
+    location: class GPSRenderer
+  D:\MeetFroz\src\ver\1.21.9\java\ru\meetfroz\compat\RenderCompat.java:7: error: cannot find symbol
+  import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+                                                    ^
+    symbol:   class WorldRenderContext
+    location: package net.fabricmc.fabric.api.client.rendering.v1
+  D:\MeetFroz\src\ver\1.21.9\java\ru\meetfroz\compat\RenderCompat.java:91: error: cannot find symbol
+      public static void drawMarker(WorldRenderContext ctx, GPSMarker m,
+                                    ^
+    symbol:   class WorldRenderContext
+    location: class RenderCompat
+  D:\MeetFroz\src\main\java\ru\meetfroz\client\GPSRenderer.java:36: error: package WorldRenderEvents does not exist
+          WorldRenderEvents.LAST.register(GPSRenderer::render);
+                           ^
+  6 errors
+
+* Try:
+> Check your code and dependencies to fix the compilation error(s)
+> Run with --scan to get full insights.
+
+BUILD FAILED in 2m 43s
+2 actionable tasks: 2 executed

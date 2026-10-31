@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "meetfroz",
+  "version": "${version}",
+  "name": "MeetFroz",
+  "description": "GPS-метки: создавайте метки командой .gps, кликайте по координатам в чате, видьте красивые маркеры через стены с расстоянием и координатами.",
+  "authors": [
+    "MeetFroz"
+  ],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "ru.meetfroz.client.MeetFroz"
+    ]
+  },
+  "mixins": [
+    "meetfroz.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "fabric-api": "*",
+    "minecraft": "${mc}",
+    "java": ">=21"
+  }
+}
