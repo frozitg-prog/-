@@ -150,7 +150,7 @@ public final class RenderCompat {
                 CORNER_R + 1.5f, 3.0f, ir(color), ig(color), ib(color), (int) (a * 0.45f));
         // Тёмный полупрозрачный фон.
         drawRoundedFill(entry, consumers.getBuffer(SEE_THROUGH), left, top, w, h,
-                CORNER_R, 12, 13, 20, (int) (a * 0.62f));
+                CORNER_R, 12, 13, 20, (int) (a * 0.90f));
         // Чёткая светящаяся рамка цвета метки.
         drawRoundedBorder(entry, consumers.getBuffer(SEE_THROUGH), left, top, w, h,
                 CORNER_R, 1.3f, ir(color), ig(color), ib(color), (int) (a * 0.95f));
