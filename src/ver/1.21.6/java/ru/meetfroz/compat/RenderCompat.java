@@ -77,8 +77,8 @@ public final class RenderCompat {
     // Адаптивный масштаб: чем дальше метка, тем крупнее панель в мире, чтобы
     // на экране текст оставался читаемым (ограничен снизу и сверху).
     private static final float PANEL_SCALE_MIN = 0.035f;   // блоков на пиксель (у метки)
-    private static final float PANEL_SCALE_PER_BLOCK = 0.0012f; // рост масштаба с расстоянием
-    private static final float PANEL_SCALE_MAX = 1.8f;      // потолок (панель не «гигантская»)
+    private static final float PANEL_SCALE_PER_BLOCK = 0.0018f; // рост масштаба с расстоянием
+    private static final float PANEL_SCALE_MAX = 7.4f;      // потолок (панель не «гигантская»)
     private static final float LINE_HEIGHT = 11.0f;
     private static final float PAD_X = 7.0f;
     private static final float PAD_Y = 6.0f;
@@ -173,13 +173,13 @@ public final class RenderCompat {
         y += LINE_HEIGHT;
         int distCol = (a << 24) | (color & 0xFFFFFF);
         float dx = -distW / 2f;
-        tr.draw(Text.literal(distLine), dx, y, distCol, false, pos, consumers,
+        tr.draw(Text.literal(distLine), dx, y, distCol, true, pos, consumers,
                 TextRenderer.TextLayerType.SEE_THROUGH, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 
         y += LINE_HEIGHT;
         int coordCol = (a << 24) | 0xBFD9FF;
         float cx = -coordW / 2f;
-        tr.draw(Text.literal(coordsLine), cx, y, coordCol, false, pos, consumers,
+        tr.draw(Text.literal(coordsLine), cx, y, coordCol, true, pos, consumers,
                 TextRenderer.TextLayerType.SEE_THROUGH, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
     }
 
