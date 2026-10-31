@@ -105,14 +105,14 @@ public final class FriendsManager {
                     notifyPlayer("§cИспользование: §f.friends remove <player>");
                     return;
                 }
-                boolean removed;
+                String actual;
                 synchronized (FriendsManager.class) {
-                    String actual = findName(parts[2]);
-                    removed = actual != null && FRIENDS.remove(actual);
+                    actual = findName(parts[2]);
+                    boolean removed = actual != null && FRIENDS.remove(actual);
                     if (removed) save();
                 }
-                if (removed) {
-                    removeLocalNameColor(parts[2]);
+                if (actual != null) {
+                    removeLocalNameColor(actual);
                     notifyPlayer("§a" + parts[2] + " удалён(а) из списка друзей.");
                 } else {
                     notifyPlayer("§c" + parts[2] + " не найден(а) в списке друзей.");
