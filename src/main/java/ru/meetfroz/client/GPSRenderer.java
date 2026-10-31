@@ -29,7 +29,7 @@ public final class GPSRenderer {
      * увеличено с 1024). Панель дополнительно масштабируется по расстоянию
      * в RenderCompat, чтобы текст оставался читаемым.
      */
-    private static final double MAX_RENDER_DIST = 2048.0;
+    private static final double MAX_RENDER_DIST = 4096.0;
 
     private GPSRenderer() {
     }
