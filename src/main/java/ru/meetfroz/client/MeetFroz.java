@@ -28,6 +28,7 @@ public final class MeetFroz implements ClientModInitializer {
         manager.load();
 
         GPSCommand.register();
+        FriendsManager.register();
         GPSRenderer.register();
 
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
